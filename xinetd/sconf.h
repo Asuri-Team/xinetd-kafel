@@ -159,7 +159,7 @@ struct service_config
    char                *sc_libwrap;
 #endif
 
-#ifdef HAVE_SELINUX
+#ifdef HAVE_KAFEL
    struct sock_fprog    *sc_selinux_fprog;
 #endif
 } ;

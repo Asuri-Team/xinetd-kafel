@@ -102,7 +102,7 @@
 
 #undef HAVE_MDNS
 
-#undef HAVE_SELINUX
+#undef HAVE_KAFEL
 
 #undef HAVE_DNSREGISTRATION
 

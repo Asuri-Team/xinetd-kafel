@@ -11,6 +11,7 @@ Options to configure:
 Check the README file for a description of the following options:
 --with-libwrap=[path] to specify that you would like libwrap compiled in.
 --with-loadavg
+--with-kafel
 
 Other options, such as what signals do what, where the default paths
 point for things like the config file and the debug dump file, default

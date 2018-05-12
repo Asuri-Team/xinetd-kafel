@@ -301,7 +301,7 @@ AC_ARG_WITH(kafel,
 		AC_CHECK_HEADER(kafel.h, [
 			AC_CHECK_LIB(kafel, kafel_ctxt_create, [
 				KAFELLIBS="-lkafel"
-				AC_DEFINE(HAVE_SELINUX)], [AC_MSG_ERROR([Required library kafel not found.])])
+				AC_DEFINE(HAVE_KAFEL)], [AC_MSG_ERROR([Required library kafel not found.])])
 			LIBS="$KAFELLIBS $LIBS"
 		], AC_MSG_ERROR([Required library kafel not found.]))
 		;;
@@ -310,17 +310,26 @@ AC_ARG_WITH(kafel,
 		if test -d "$withval"; then
 			withval=`cd $withval; pwd`
 			KAFELLIBS="-L$withval -lkafel"
+			KAFELSTATIC="$withval/libkafel.a"
 			KAFELCFLAGS="-I$withval/include"
 		else
 			AC_MSG_ERROR([Required library kafel not found.])
 		fi
-		LIBS="$KAFELLIBS $LIBS"
 		OLDCFLAGS=$CFLAGS; CFLAGS="$KAFELCFLAGS $CFLAGS"
-		OLDLDFLAGS=$LDFLAGS; LDFLAGS="$KAFELLIBS $LDFLAGS"
 		AC_CHECK_HEADER(kafel.h, [
-			AC_CHECK_LIB(kafel, kafel_ctxt_create, [
-				AC_DEFINE(HAVE_SELINUX)
-				LDFLAGS=$OLDLDFLAGS], [AC_MSG_ERROR([Required library kafel not found.])])
+			echo -n "checking for libkafel.a... "
+			if test -f "$KAFELSTATIC"; then
+				echo "yes"
+				LIBS="$KAFELSTATIC $LIBS"
+				AC_DEFINE(HAVE_KAFEL)
+			else
+				echo "no"
+				OLDLDFLAGS=$LDFLAGS; LDFLAGS="$KAFELLIBS $LDFLAGS"
+				LIBS="$KAFELLIBS $LIBS"
+				AC_CHECK_LIB(kafel, kafel_ctxt_create, [
+					AC_DEFINE(HAVE_KAFEL)
+					LDFLAGS=$OLDLDFLAGS], [AC_MSG_ERROR([Required library kafel not found.])])
+			fi
 		], AC_MSG_ERROR([Required library kafel not found.]))
 		;;
 	esac ],

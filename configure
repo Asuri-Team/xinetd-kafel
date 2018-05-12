@@ -5674,7 +5674,7 @@ $as_echo "$ac_cv_lib_kafel_kafel_ctxt_create" >&6; }
 if test "x$ac_cv_lib_kafel_kafel_ctxt_create" = xyes; then :
 
 				KAFELLIBS="-lkafel"
-				$as_echo "#define HAVE_SELINUX 1" >>confdefs.h
+				$as_echo "#define HAVE_KAFEL 1" >>confdefs.h
 
 else
   as_fn_error $? "Required library kafel not found." "$LINENO" 5
@@ -5694,17 +5694,26 @@ $as_echo "yes" >&6; }
 		if test -d "$withval"; then
 			withval=`cd $withval; pwd`
 			KAFELLIBS="-L$withval -lkafel"
+			KAFELSTATIC="$withval/libkafel.a"
 			KAFELCFLAGS="-I$withval/include"
 		else
 			as_fn_error $? "Required library kafel not found." "$LINENO" 5
 		fi
-		LIBS="$KAFELLIBS $LIBS"
 		OLDCFLAGS=$CFLAGS; CFLAGS="$KAFELCFLAGS $CFLAGS"
-		OLDLDFLAGS=$LDFLAGS; LDFLAGS="$KAFELLIBS $LDFLAGS"
 		ac_fn_c_check_header_mongrel "$LINENO" "kafel.h" "ac_cv_header_kafel_h" "$ac_includes_default"
 if test "x$ac_cv_header_kafel_h" = xyes; then :
 
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for kafel_ctxt_create in -lkafel" >&5
+			echo -n "checking for libkafel.a... "
+			if test -f "$KAFELSTATIC"; then
+				echo "yes"
+				LIBS="$KAFELSTATIC $LIBS"
+				$as_echo "#define HAVE_KAFEL 1" >>confdefs.h
+
+			else
+				echo "no"
+				OLDLDFLAGS=$LDFLAGS; LDFLAGS="$KAFELLIBS $LDFLAGS"
+				LIBS="$KAFELLIBS $LIBS"
+				{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for kafel_ctxt_create in -lkafel" >&5
 $as_echo_n "checking for kafel_ctxt_create in -lkafel... " >&6; }
 if ${ac_cv_lib_kafel_kafel_ctxt_create+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -5742,13 +5751,14 @@ fi
 $as_echo "$ac_cv_lib_kafel_kafel_ctxt_create" >&6; }
 if test "x$ac_cv_lib_kafel_kafel_ctxt_create" = xyes; then :
 
-				$as_echo "#define HAVE_SELINUX 1" >>confdefs.h
+					$as_echo "#define HAVE_KAFEL 1" >>confdefs.h
 
-				LDFLAGS=$OLDLDFLAGS
+					LDFLAGS=$OLDLDFLAGS
 else
   as_fn_error $? "Required library kafel not found." "$LINENO" 5
 fi
 
+			fi
 
 else
   as_fn_error $? "Required library kafel not found." "$LINENO" 5

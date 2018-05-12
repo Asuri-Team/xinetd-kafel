@@ -42,7 +42,7 @@
 #include <sys/file.h>
 #endif
 
-#ifdef HAVE_SELINUX
+#ifdef HAVE_KAFEL
 #include <linux/filter.h>
 #endif
 
@@ -415,7 +415,7 @@ static void deactivate( const struct service *sp )
    xinetd_mdns_deregister(SVC_CONF(sp));
 #endif
 
-#ifdef HAVE_SELINUX
+#ifdef HAVE_KAFEL
    if(SC_SELINUX_FPROG(SVC_CONF(sp)) != NULL)
    {
       struct sock_fprog *fprog = SC_SELINUX_FPROG(SVC_CONF(sp));

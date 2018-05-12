@@ -74,8 +74,8 @@ int main( int argc, char *argv[] )
 #ifdef HAVE_MDNS
    "mdns "
 #endif
-#ifdef HAVE_SELINUX
-   "selinux "
+#ifdef HAVE_KAFEL
+   "selinux(kafel) "
 #endif
 #ifdef HAVE_HOWL
    "howl "
@@ -86,7 +86,7 @@ int main( int argc, char *argv[] )
 #ifdef LABELED_NET
    "labeled-networking "
 #endif
-#if !defined(LIBWRAP) && !defined(HAVE_LOADAVG) && !defined(HAVE_MDNS) && !defined(HAVE_HOWL) && !defined(HAVE_DNSREGISTRATION) && !defined(LABELED_NET)
+#if !defined(LIBWRAP) && !defined(HAVE_LOADAVG) && !defined(HAVE_MDNS) && !defined(HAVE_HOWL) && !defined(HAVE_DNSREGISTRATION) && !defined(LABELED_NET) && !defined(HAVE_KAFEL)
    "no "
 #endif
    "options compiled in."
