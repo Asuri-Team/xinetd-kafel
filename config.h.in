@@ -102,6 +102,8 @@
 
 #undef HAVE_MDNS
 
+#undef HAVE_KAFEL
+
 #undef HAVE_DNSREGISTRATION
 
 #undef HAVE_HOWL

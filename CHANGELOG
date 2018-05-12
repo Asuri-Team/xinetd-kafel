@@ -932,3 +932,7 @@ This file describes the changes to xinetd. The base version is 2.0.0.
 	Change version number to 2.3.15devel, indicating an interim
 		developmental source snapshot.
 	Merge patch from Thomas Swan regarding CVE-2012-0862
+
+2.3.15-kafel
+	Add support for kafel seccomp filter compiler, to let xinetd control syscalls 
+		called by server. This can ensure your server safety.

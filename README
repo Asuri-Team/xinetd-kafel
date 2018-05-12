@@ -1,3 +1,14 @@
+xinetd-kafel is a modification version of original xinetd.
+Kafel allows you compile Berkeley Packet Filter easily, thanks
+Google for Kafel.
+
+Changes
+-------------------------------------------------------------------------
+Add kafel compiler and seccomp syscall filter support to origin xinetd.
+For more information, please the document below.
+
+
+
 xinetd is a powerful replacement for inetd.
 Original site: http://www.xinetd.org
 xinetd has access control mechanisms, extensive logging capabilities,
@@ -44,6 +55,12 @@ service flag, even without this option.
 PATH is the prefix where howl is installed, such as /usr/local,
 /usr, etc.  PATH is not optional.  configure will not automatically
 detect howl's installed location.
+
+--with-kafel=PATH: Adds kafel compiled selinux filter support to xinetd.
+PATH is the prefix where kafel is installed, such as /usr/local,
+/usr, etc.  PATH is optional.  configure will automatically
+detect kafel's installed location, if kafel is already installed in
+system paths.
 
 Access Control:
 --------------------------------------------------------------------------
@@ -112,6 +129,27 @@ does a straight translation of inetd.conf file syntax to xinetd.conf.
 It handles tcpd correctly, warns on the use of rpc services, 
 sets the REUSE flag, and handles groups properly if your inetd.conf file 
 supports them.
+
+kafel:
+--------------------------------------------------------------------------
+for kafel and syscall filter support, it is done by adding kafel_rule to
+configuration file. So, you need to have an entry like this:
+service telnet
+{
+     ...
+	 server = /path/to/your/server
+	 ...
+	 kafel_rule /path/to/kafel/rule/file
+	 ...
+}
+Inside kafel rule file, you need something like this:
+POLICY bad {
+    DENY {
+        listen, seccomp, ptrace, accept, accept4
+    }
+} USE bad DEFAULT ALLOW
+For more gramma, please visit: https://github.com/google/kafel
+
 
 xinetd was originally written by panos@cs.colorado.edu.  At least one other
 version of xinetd has been seen floating around the net.  This version is

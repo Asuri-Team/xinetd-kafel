@@ -158,6 +158,10 @@ struct service_config
 #ifdef LIBWRAP
    char                *sc_libwrap;
 #endif
+
+#ifdef HAVE_KAFEL
+   struct sock_fprog    *sc_selinux_fprog;
+#endif
 } ;
 
 #define SCP( p ) ((struct service_config *)(p))
@@ -219,6 +223,7 @@ struct service_config
 #define SC_MDNS( scp )           (scp)->sc_mdns
 #define SC_PER_SOURCE( scp )     (scp)->sc_per_source
 #define SC_LIBWRAP( scp )        (scp)->sc_libwrap
+#define SC_SELINUX_FPROG( scp )  (scp)->sc_selinux_fprog
 /*
  * Field set macros
  */

@@ -36,6 +36,10 @@
 #include <selinux/flask.h>
 #include <selinux/context.h>
 #endif
+#ifdef HAVE_KAFEL
+#include <sys/prctl.h>
+#include <linux/seccomp.h>
+#endif
 
 #include "str.h"
 #include "child.h"
@@ -180,6 +184,16 @@ void exec_server( const struct server *serp )
 #endif
 #endif
 
+#ifdef HAVE_KAFEL
+   if(SC_SELINUX_FPROG(scp) != NULL)
+   {
+      if(prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, SC_SELINUX_FPROG(scp)))
+      {
+         msg( LOG_WARNING, func, "prctl(PR_SET_SECCOMP) failed: %m") ;
+      }
+      msg( LOG_DEBUG, func, "Set selinux filter.") ;
+   }
+#endif
    (void) execve( server, SC_SERVER_ARGV( scp ),
              env_getvars( SC_ENV( scp )->env_handle ) ) ;
 

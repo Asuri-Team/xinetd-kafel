@@ -70,5 +70,9 @@ status_e mdns_parser(pset_h, struct service_config *, enum assign_op) ;
 #ifdef LIBWRAP
 status_e libwrap_parser(pset_h, struct service_config *, enum assign_op) ;
 #endif
+#ifdef HAVE_KAFEL
+status_e kafel_parser(pset_h, struct service_config *, enum assign_op) ;
+#endif
+
 
 #endif

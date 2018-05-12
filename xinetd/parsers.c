@@ -40,6 +40,11 @@
 #include "timex.h"
 #include "addr.h"	/* check_hostname() */
 
+#ifdef HAVE_KAFEL
+#include <kafel.h>
+#include <linux/filter.h>
+#endif
+
 #define NEW_SET( set, v1, v2 )                 \
    if ( (set) == NULL && \
    ( (set) = pset_create( (v1), (v2) ) ) == NULL )   \
@@ -269,6 +274,54 @@ status_e mdns_parser( pset_h values,
    }
    return( OK ) ;
 }
+#endif
+
+#ifdef HAVE_KAFEL
+status_e kafel_parser( pset_h values, 
+                      struct service_config *scp, 
+                      enum assign_op op )
+{
+   const char *func = "kafel_parser" ;
+   char *val = (char *) pset_pointer( values, 0 ) ;
+   FILE *fp = fopen(val, "r");
+   if(!fp)
+   {
+      parsemsg( LOG_ERR, func, "Open kafel file %s failed: %e", val );
+      return( FAILED );
+   }
+   fseek(fp, 0, SEEK_END);
+   size_t rd_sz, fp_sz = ftell(fp);
+   fseek(fp, 0, SEEK_SET);
+   char *kafel_src = malloc(fp_sz + 1);
+   rd_sz = fread(kafel_src, 1, fp_sz, fp);
+   if(rd_sz != fp_sz)
+   {
+      parsemsg( LOG_ERR, func, "Read kafel file %s failed, expect: %u, actual: %u", fp_sz, rd_sz );
+      return( FAILED );
+   }
+   kafel_src[fp_sz] = 0;
+   fclose(fp);
+
+   parsemsg( LOG_NOTICE, func, "SELINUX policy: %s", kafel_src );
+   struct sock_fprog *fprog = malloc(sizeof(struct sock_fprog));
+   kafel_ctxt_t ctxt = kafel_ctxt_create();
+   kafel_set_input_string(ctxt, kafel_src);
+   if (!kafel_compile(ctxt, fprog))
+   {
+       kafel_ctxt_destroy(&ctxt);
+       SC_SELINUX_FPROG(scp) = fprog;
+   }
+   else
+   {
+      parsemsg( LOG_ERR, func, "SELINUX policy compilation failed: %s", kafel_error_msg(ctxt) );
+      kafel_ctxt_destroy(&ctxt);
+      free (fprog);
+      SC_SELINUX_FPROG(scp) = NULL;
+      return( FAILED );
+   }
+   return( OK ) ;
+}
+
 #endif
 
 status_e user_parser( pset_h values, 
