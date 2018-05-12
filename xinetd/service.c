@@ -42,6 +42,10 @@
 #include <sys/file.h>
 #endif
 
+#ifdef HAVE_SELINUX
+#include <linux/filter.h>
+#endif
+
 #include "sio.h"
 #include "service.h"
 #include "util.h"
@@ -409,6 +413,15 @@ static void deactivate( const struct service *sp )
 
 #ifdef HAVE_MDNS
    xinetd_mdns_deregister(SVC_CONF(sp));
+#endif
+
+#ifdef HAVE_SELINUX
+   if(SC_SELINUX_FPROG(SVC_CONF(sp)) != NULL)
+   {
+      struct sock_fprog *fprog = SC_SELINUX_FPROG(SVC_CONF(sp));
+      free(fprog->filter);
+      free(fprog);
+   }
 #endif
 
    if (debug.on)

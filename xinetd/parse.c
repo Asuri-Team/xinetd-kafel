@@ -107,6 +107,9 @@ static const struct attribute service_attributes[] =
 #ifdef LIBWRAP
    { "libwrap",        A_LIBWRAP,        1, libwrap_parser          },
 #endif
+#ifdef HAVE_SELINUX
+   { "selinux_rule",   A_SELINUX_RULE,   1, selinux_parser          },
+#endif
    { NULL,             A_NONE,          -1,  NULL                   }
 } ;
 
@@ -136,6 +139,9 @@ static const struct attribute default_attributes[] =
    { "umask",           A_UMASK,          1,    umask_parser          },
 #ifdef HAVE_MDNS
    { "mdns",            A_MDNS,           1,    mdns_parser           },
+#endif
+#ifdef HAVE_SELINUX
+   { "selinux_rule",   A_SELINUX_RULE,    1,    selinux_parser        },
 #endif
    { NULL,              A_NONE,           0,    NULL                  }
 } ;

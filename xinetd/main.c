@@ -74,6 +74,9 @@ int main( int argc, char *argv[] )
 #ifdef HAVE_MDNS
    "mdns "
 #endif
+#ifdef HAVE_SELINUX
+   "selinux "
+#endif
 #ifdef HAVE_HOWL
    "howl "
 #endif

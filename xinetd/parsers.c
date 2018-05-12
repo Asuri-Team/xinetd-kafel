@@ -40,6 +40,11 @@
 #include "timex.h"
 #include "addr.h"	/* check_hostname() */
 
+#ifdef HAVE_SELINUX
+#include <kafel.h>
+#include <linux/filter.h>
+#endif
+
 #define NEW_SET( set, v1, v2 )                 \
    if ( (set) == NULL && \
    ( (set) = pset_create( (v1), (v2) ) ) == NULL )   \
@@ -269,6 +274,34 @@ status_e mdns_parser( pset_h values,
    }
    return( OK ) ;
 }
+#endif
+
+#ifdef HAVE_SELINUX
+status_e selinux_parser( pset_h values, 
+                      struct service_config *scp, 
+                      enum assign_op op )
+{
+   char *val = (char *) pset_pointer( values, 0 ) ;
+   const char *func = "selinux_parser" ;
+   struct sock_fprog *fprog = malloc(sizeof(struct sock_fprog));
+   kafel_ctxt_t ctxt = kafel_ctxt_create();
+   kafel_set_input_string(ctxt, val);
+   if (!kafel_compile(ctxt, fprog))
+   {
+       kafel_ctxt_destroy(&ctxt);
+       SC_SELINUX_FPROG(scp) = fprog;
+   }
+   else
+   {
+      parsemsg( LOG_ERR, func, "SELINUX policy compilation failed: %s", kafel_error_msg(ctxt) );
+      kafel_ctxt_destroy(&ctxt);
+      free (fprog);
+      SC_SELINUX_FPROG(scp) = NULL;
+      return( FAILED );
+   }
+   return( OK ) ;
+}
+
 #endif
 
 status_e user_parser( pset_h values, 
