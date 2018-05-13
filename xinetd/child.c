@@ -187,7 +187,12 @@ void exec_server( const struct server *serp )
 #ifdef HAVE_KAFEL
    if(SC_SELINUX_FPROG(scp) != NULL)
    {
-      if(prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, SC_SELINUX_FPROG(scp)))
+      if(prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == -1)
+      {
+         msg( LOG_WARNING, func, "prctl(PR_SET_NO_NEW_PRIVS) failed: %m") ;
+      }
+
+      if(prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, SC_SELINUX_FPROG(scp)) == -1)
       {
          msg( LOG_WARNING, func, "prctl(PR_SET_SECCOMP) failed: %m") ;
       }
