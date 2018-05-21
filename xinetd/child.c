@@ -196,7 +196,8 @@ void exec_server( const struct server *serp )
       {
          msg( LOG_WARNING, func, "prctl(PR_SET_SECCOMP) failed: %m") ;
       }
-      msg( LOG_DEBUG, func, "Set selinux filter.") ;
+      if ( debug.on )
+         msg( LOG_DEBUG, func, "Set selinux filter.") ;
    }
 #endif
    (void) execve( server, SC_SERVER_ARGV( scp ),
